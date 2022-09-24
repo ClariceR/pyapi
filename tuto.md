@@ -38,3 +38,8 @@ main is the file to run
 app is the FastAPI instance
 --reload automatically restarts the server to reflect the changes in the code
 
+When we create something, we should send a 201 response
+When something doesn't exist, we should send a 404 response
+when we delete something, we should send a 204 response. We also don't send any data back, but we can return a 204 status
+To change the default status, we pass another option to the decorator
+
