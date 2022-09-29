@@ -51,3 +51,23 @@ from typing import Optional
 class Post(BaseModel):
     rating: Optional[int] = None
 ```
+
+## Setting up .env file
+1. create a .env file in the root of the project
+2. Add your variables like bash
+3. Install dotenv library
+4. In the main file, import dotenv_values from dotenv
+5. Create a dotenv instance
+
+```python
+config = dotenv_values(".env")
+```
+6. Declare your variables using the variables created in the .env file
+
+```python
+host = config['HOST']
+database = config['DATABASE']
+user = config['USER']
+password = config['PASSWORD']
+```
+
