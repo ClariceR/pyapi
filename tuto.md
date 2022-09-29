@@ -43,3 +43,11 @@ When something doesn't exist, we should send a 404 response
 when we delete something, we should send a 204 response. We also don't send any data back, but we can return a 204 status
 To change the default status, we pass another option to the decorator
 
+
+## Optional property
+If you want to have a property for your Post object that is optional:
+```python
+from typing import Optional
+class Post(BaseModel):
+    rating: Optional[int] = None
+```

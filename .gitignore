@@ -2,5 +2,7 @@
 .AppleDouble
 .LSOverride
 
+.env
+
 __pycache__
 venv
