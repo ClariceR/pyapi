@@ -1,6 +1,8 @@
-from fastapi import FastAPI, Response, status, HTTPException
+from fastapi import FastAPI, Response, status, HTTPException, Depends
+from . import models
+from sqlalchemy.orm import Session
+from .database import engine, get_db
 from pydantic import BaseModel
-from random import randrange
 import psycopg2
 from dotenv import dotenv_values
 
@@ -10,7 +12,10 @@ database = config['DATABASE']
 user = config['USER']
 password = config['PASSWORD']
 
+models.Base.metadata.create_all(bind=engine)
+
 app = FastAPI()
+
 
 class Post(BaseModel):
     title: str
@@ -24,6 +29,7 @@ except Exception as error:
     print('Could not connect to database')
     print('Error: ', error)
 
+
 my_posts = [{"title": "title of post 1", "content": "content of post 1", "id": 1}, 
 {"title": "favourite food", "content": "pizza", "id": 2}]
 
@@ -32,11 +38,18 @@ my_posts = [{"title": "title of post 1", "content": "content of post 1", "id": 1
 async def root():
     return {'message': 'My FastAPI'}
 
+@app.get('/sqlalchemy')
+def get_posts_using_sqlaclchemy(db: Session = Depends(get_db)):
+    posts = db.query(models.Post).all()
+    return {"data": posts}
+
+
 @app.get('/posts')
 def get_posts():
     cursor.execute("""SELECT * FROM posts""")
     posts = cursor.fetchall()
     return {'data': posts}
+
 
 @app.post('/posts', status_code=status.HTTP_201_CREATED)
 def create_post(post: Post):
@@ -46,10 +59,6 @@ def create_post(post: Post):
 
     return {'data': new_post}
 
-# def find_post(id):
-#     for post in my_posts:
-#         if post['id'] == id:
-#             return post
 
 @app.get('/posts/{id}')
 def get_post(id: int):
@@ -60,7 +69,6 @@ def get_post(id: int):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"post {id} not found")
     return {"post_selected": post }
-
 
 
 @app.delete('/posts/{id}', status_code=status.HTTP_204_NO_CONTENT)
@@ -74,6 +82,7 @@ def delete_post(id: int):
     conn.commit()
   
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
 
 @app.put('/posts/{id}')
 def update_post(id: int, post: Post):
