@@ -20,7 +20,7 @@ app = FastAPI()
 class Post(BaseModel):
     title: str
     content: str
-    is_published: bool = False
+    published: bool = False
 
 try:
     conn = psycopg2.connect(host=host, database=database, user=user, password=password)
@@ -38,25 +38,31 @@ my_posts = [{"title": "title of post 1", "content": "content of post 1", "id": 1
 async def root():
     return {'message': 'My FastAPI'}
 
+
+# Before:
+@app.get('/posts')
+def get_posts(db: Session = Depends(get_db)):
+    # cursor.execute("""SELECT * FROM posts""")
+    # posts = cursor.fetchall()
+    posts = db.query(models.Post).all()
+    return {'data': posts}
+
+# After:
 @app.get('/sqlalchemy')
 def get_posts_using_sqlaclchemy(db: Session = Depends(get_db)):
     posts = db.query(models.Post).all()
     return {"data": posts}
 
 
-@app.get('/posts')
-def get_posts():
-    cursor.execute("""SELECT * FROM posts""")
-    posts = cursor.fetchall()
-    return {'data': posts}
-
-
 @app.post('/posts', status_code=status.HTTP_201_CREATED)
-def create_post(post: Post):
-    cursor.execute("""INSERT INTO posts (title, content, is_published) VALUES (%s, %s, %s) RETURNING *""", (post.title, post.content, post.is_published))
-    new_post = cursor.fetchone()
-    conn.commit()
-
+def create_post(post: Post, db: Session = Depends(get_db)):
+    # cursor.execute("""INSERT INTO posts (title, content, is_published) VALUES (%s, %s, %s) RETURNING *""", (post.title, post.content, post.is_published))
+    # new_post = cursor.fetchone()
+    # conn.commit()
+    new_post = models.Post(**post.dict())
+    db.add(new_post)
+    db.commit()
+    db.refresh(new_post)
     return {'data': new_post}
 
 
