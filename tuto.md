@@ -75,3 +75,12 @@ SQLAlchemy
 We need a driver for the database we want to use. In this case we are using postgres with psycopg2.
 The file database.py handles the database connection
 The file models will represent our tables
+
+Creating User Account
+First thing we need is to define our model (create a table in postgres database to hold all user info),
+Because we're using SQLAlchemy we need to create an ORM model, to define what our postgres table looks like.
+So first thing, go to the models file and create a model for the user table
+
+Then we create a UserCreate schema
+
+We also need to create the users endpoint in our main file
