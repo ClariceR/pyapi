@@ -71,3 +71,7 @@ user = config['USER']
 password = config['PASSWORD']
 ```
 
+SQLAlchemy
+We need a driver for the database we want to use. In this case we are using postgres with psycopg2.
+The file database.py handles the database connection
+The file models will represent our tables
