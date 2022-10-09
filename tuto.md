@@ -107,3 +107,5 @@ We will need to set up routes for all calls, as we are not in our main app anymo
 import APIRouter from fastapi, create an instance and save it in a routes variable
 replace @app.get... to @router...
 In the main file import post and user from routers
+
+We can create a prefix to abstract the repetitive routes

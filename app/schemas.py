@@ -43,3 +43,8 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+
+
+# login schemas
+class UserLogin(UserBase):
+    password: str
