@@ -84,3 +84,18 @@ So first thing, go to the models file and create a model for the user table
 Then we create a UserCreate schema
 
 We also need to create the users endpoint in our main file
+
+Now, we need to hash the password for user
+```
+    pip install "passlib[bcrypt]"
+```
+In the create user endpoint function, before creating the user, create the hash
+```python
+hashed_password = pwd_context.hash(user.password)
+```
+Then update the pydant model:
+```python
+user.password = hashed_password
+```
+
+Abstract the hashing logic to its own function in a file called utils.py

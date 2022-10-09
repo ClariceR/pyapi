@@ -1,7 +1,8 @@
 import psycopg2
 from fastapi import FastAPI, Response, status, HTTPException, Depends
 from sqlalchemy.orm import Session
-from typing import Optional, List
+from typing import List
+from passlib.context import CryptContext
 
 from . import models, schemas
 from .database import engine, get_db
@@ -14,6 +15,7 @@ database = config['DATABASE']
 user = config['USER']
 password = config['PASSWORD']
 
+pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -98,6 +100,9 @@ def update_post(id: int, post: schemas.PostCreate, db: Session = Depends(get_db)
 
 @app.post('/users', status_code=status.HTTP_201_CREATED, response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+
+    hashed_password = pwd_context.hash(user.password)
+    user.password = hashed_password
     new_user = models.User(**user.dict())
     db.add(new_user)
     db.commit()
