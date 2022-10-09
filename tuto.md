@@ -99,3 +99,11 @@ user.password = hashed_password
 ```
 
 Abstract the hashing logic to its own function in a file called utils.py
+
+Next step is to refactor our main file, and separate the calls for posts and users
+Create a folder called routes and inside it, two files: post.py and user.py
+Now move the corresponding code to its file, and all the needed imports
+We will need to set up routes for all calls, as we are not in our main app anymore
+import APIRouter from fastapi, create an instance and save it in a routes variable
+replace @app.get... to @router...
+In the main file import post and user from routers
