@@ -109,3 +109,31 @@ replace @app.get... to @router...
 In the main file import post and user from routers
 
 We can create a prefix to abstract the repetitive routes
+
+## user login
+Create UserLogin schema
+Create auth file and create login route
+find user by email:
+```python
+user = db.query(models.User).filter(models.User.email == user_credentials.email).first()
+```
+if not found, raise a 404 status
+```python
+if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Invalid credentials")
+```
+if found, we need to validate password
+create validate function in utils
+```python
+def verify(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+```
+in auth file, check if password validate
+```python
+    if not utils.verify(user_credentials.password, user.password):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Invalid credentials")
+```
+import login route in main
+
